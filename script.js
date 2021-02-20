@@ -5,7 +5,7 @@ let isDragging = false,
   startPos = 0,
   currentTranslate = 0,
   prevTranslate = 0,
-  animationID = 0,
+  animationID,
   currentIndex = 0;
 
 slides.forEach((slide, index) => {
@@ -23,6 +23,8 @@ slides.forEach((slide, index) => {
   slide.addEventListener("mouseleave", touchEnd);
   slide.addEventListener("mousemove", touchMove);
 });
+
+window.addEventListener("resize", setPositionByIndex);
 
 // Disable context window
 
@@ -46,8 +48,17 @@ function touchStart(index) {
 }
 
 function touchEnd() {
-  isDragging = false;
   cancelAnimationFrame(animationID);
+  isDragging = false;
+
+  const movedBy = currentTranslate - prevTranslate;
+
+  if (movedBy < -100 && currentIndex < slides.length - 1) currentIndex += 1;
+
+  if (movedBy > 100 && currentIndex > 0) currentIndex -= 1;
+
+  setPositionByIndex();
+
   slider.classList.remove("grabbing");
 }
 
@@ -66,6 +77,13 @@ function animation() {
   setSliderPostion();
   if (isDragging) requestAnimationFrame(animation);
 }
+
+function setPositionByIndex() {
+  currentTranslate = currentIndex * -window.innerWidth;
+  prevTranslate = currentTranslate;
+  setSliderPosition();
+}
+
 function setSliderPostion() {
-  slider.getElementsByClassName.transform = `translateX(${currentTranslate}px)`;
+  slider.style.transform = `translateX(${currentTranslate}px)`;
 }
