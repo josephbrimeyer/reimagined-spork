@@ -24,16 +24,31 @@ slides.forEach((slide, index) => {
   slide.addEventListener("mousemove", touchMove);
 });
 
+// Disable context window
+
+window.oncontextmenu = function (event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
+};
+
 function touchStart(index) {
   return function (event) {
-    console.log("start");
+    currentIndex = index;
+    startPos = event.type.includes("mouse")
+      ? event.pageX
+      : event.touches[0].clientX;
+    console.log(startPos);
+    isDragging = true;
   };
 }
 
 function touchEnd() {
-  console.log("end");
+  isDragging = false;
 }
 
 function touchMove() {
-  console.log("move");
+  if (isDragging) {
+    console.log("move");
+  }
 }
